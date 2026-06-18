@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+@OptIn(ExperimentalLayoutApi::class)
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,11 +37,22 @@ fun SearchScreen(onMediaClick: (Int) -> Unit) {
     val repository = remember { TmdbRepository() }
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<MediaItem>>(emptyList()) }
+    var popularMovies by remember { mutableStateOf<List<MediaItem>>(emptyList()) }
     var isSearching by remember { mutableStateOf(false) }
     var isFocused by remember { mutableStateOf(false) }
 
+    val trendingSearches = listOf("Jawan", "Oppenheimer", "One Piece", "Demon Slayer")
+
+    LaunchedEffect(Unit) {
+        try {
+            popularMovies = repository.getPopularMovies()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     LaunchedEffect(searchQuery) {
-        if (searchQuery.length > 2) {
+        if (searchQuery.length >= 4) {
             delay(400)
             isSearching = true
             try {
@@ -85,10 +98,65 @@ fun SearchScreen(onMediaClick: (Int) -> Unit) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = KINO_Red)
             }
+        } else if (searchQuery.length < 4) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                item {
+                    Text(
+                        text = "Trending Searches",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        trendingSearches.forEach { search ->
+                            Surface(
+                                color = Color.White.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(20.dp),
+                                modifier = Modifier.clickable { searchQuery = search }
+                            ) {
+                                Text(
+                                    text = search,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Popular Movies",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
+                items(popularMovies) { item ->
+                    SearchResultItem(item = item, onClick = { onMediaClick(item.id) })
+                }
+            }
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(searchResults) { item ->
-                    SearchResultItem(item = item, onClick = { onMediaClick(item.id) })
+                if (searchResults.isEmpty()) {
+                    item {
+                        Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+                            Text(text = "No results found for \"$searchQuery\"", color = TextMuted)
+                        }
+                    }
+                } else {
+                    items(searchResults) { item ->
+                        SearchResultItem(item = item, onClick = { onMediaClick(item.id) })
+                    }
                 }
             }
         }

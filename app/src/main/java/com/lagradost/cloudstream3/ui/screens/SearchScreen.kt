@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-@OptIn(ExperimentalLayoutApi::class)
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,6 +30,7 @@ import com.lagradost.cloudstream3.ui.theme.TextMuted
 import com.lagradost.cloudstream3.ui.theme.TextPrimary
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchScreen(onMediaClick: (Int) -> Unit) {
     val repository = remember { TmdbRepository() }

@@ -21,14 +21,30 @@ class HomeViewModel : ViewModel() {
     private val _popularTv = MutableStateFlow<List<MediaItem>>(emptyList())
     val popularTv: StateFlow<List<MediaItem>> = _popularTv
 
+    private val _topRated = MutableStateFlow<List<MediaItem>>(emptyList())
+    val topRated: StateFlow<List<MediaItem>> = _topRated
+
+    private val _upcoming = MutableStateFlow<List<MediaItem>>(emptyList())
+    val upcoming: StateFlow<List<MediaItem>> = _upcoming
+
+    private val _indianMovies = MutableStateFlow<List<MediaItem>>(emptyList())
+    val indianMovies: StateFlow<List<MediaItem>> = _indianMovies
+
     private val _anime = MutableStateFlow<List<MediaItem>>(emptyList())
     val anime: StateFlow<List<MediaItem>> = _anime
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _selectedCategory = MutableStateFlow("Trending")
+    val selectedCategory: StateFlow<String> = _selectedCategory
+
     init {
         fetchHomeData()
+    }
+
+    fun setCategory(category: String) {
+        _selectedCategory.value = category
     }
 
     fun fetchHomeData() {
@@ -38,11 +54,17 @@ class HomeViewModel : ViewModel() {
                 val trendingDef = async { repository.getTrending() }
                 val moviesDef = async { repository.getPopularMovies() }
                 val tvDef = async { repository.getPopularTv() }
+                val topRatedDef = async { repository.getTopRatedMovies() }
+                val upcomingDef = async { repository.getUpcomingMovies() }
+                val indianDef = async { repository.getIndianMovies() }
                 val animeDef = async { repository.getAnime() }
 
                 _trending.value = trendingDef.await()
                 _popularMovies.value = moviesDef.await()
                 _popularTv.value = tvDef.await()
+                _topRated.value = topRatedDef.await()
+                _upcoming.value = upcomingDef.await()
+                _indianMovies.value = indianDef.await()
                 _anime.value = animeDef.await()
             } catch (e: Exception) {
                 e.printStackTrace()

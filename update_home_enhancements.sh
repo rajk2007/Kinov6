@@ -1,3 +1,87 @@
+#!/bin/bash
+
+# Update HomeViewModel.kt
+cat <<EOF > app/src/main/java/com/lagradost/cloudstream3/ui/viewmodel/HomeViewModel.kt
+package com.lagradost.cloudstream3.ui.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.lagradost.cloudstream3.data.models.MediaItem
+import com.lagradost.cloudstream3.data.repository.TmdbRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+
+class HomeViewModel : ViewModel() {
+    private val repository = TmdbRepository()
+
+    private val _trending = MutableStateFlow<List<MediaItem>>(emptyList())
+    val trending: StateFlow<List<MediaItem>> = _trending
+
+    private val _popularMovies = MutableStateFlow<List<MediaItem>>(emptyList())
+    val popularMovies: StateFlow<List<MediaItem>> = _popularMovies
+
+    private val _popularTv = MutableStateFlow<List<MediaItem>>(emptyList())
+    val popularTv: StateFlow<List<MediaItem>> = _popularTv
+
+    private val _topRated = MutableStateFlow<List<MediaItem>>(emptyList())
+    val topRated: StateFlow<List<MediaItem>> = _topRated
+
+    private val _upcoming = MutableStateFlow<List<MediaItem>>(emptyList())
+    val upcoming: StateFlow<List<MediaItem>> = _upcoming
+
+    private val _indianMovies = MutableStateFlow<List<MediaItem>>(emptyList())
+    val indianMovies: StateFlow<List<MediaItem>> = _indianMovies
+
+    private val _anime = MutableStateFlow<List<MediaItem>>(emptyList())
+    val anime: StateFlow<List<MediaItem>> = _anime
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _selectedCategory = MutableStateFlow("Trending")
+    val selectedCategory: StateFlow<String> = _selectedCategory
+
+    init {
+        fetchHomeData()
+    }
+
+    fun setCategory(category: String) {
+        _selectedCategory.value = category
+    }
+
+    fun fetchHomeData() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val trendingDef = async { repository.getTrending() }
+                val moviesDef = async { repository.getPopularMovies() }
+                val tvDef = async { repository.getPopularTv() }
+                val topRatedDef = async { repository.getTopRatedMovies() }
+                val upcomingDef = async { repository.getUpcomingMovies() }
+                val indianDef = async { repository.getIndianMovies() }
+                val animeDef = async { repository.getAnime() }
+
+                _trending.value = trendingDef.await()
+                _popularMovies.value = moviesDef.await()
+                _popularTv.value = tvDef.await()
+                _topRated.value = topRatedDef.await()
+                _upcoming.value = upcomingDef.await()
+                _indianMovies.value = indianDef.await()
+                _anime.value = animeDef.await()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+}
+EOF
+
+# Update HomeComponents.kt with Pager, Scroll Effects, and Rating Fix
+cat <<EOF > app/src/main/java/com/lagradost/cloudstream3/ui/components/HomeComponents.kt
 package com.lagradost.cloudstream3.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -139,7 +223,7 @@ fun HeroBanner(trendingItems: List<MediaItem>, onMediaClick: (Int) -> Unit) {
                 ) {
                     Text(text = item.displayTitle, color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold, lineHeight = 38.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "${item.displayDate} • ⭐ ${String.format("%.1f", item.voteAverage)} • Action", color = TextMuted, fontSize = 14.sp)
+                    Text(text = "\${item.displayDate} • ⭐ \${String.format("%.1f", item.voteAverage)} • Action", color = TextMuted, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = { onMediaClick(item.id) },
@@ -241,3 +325,86 @@ fun MediaCard(item: MediaItem, onMediaClick: (Int) -> Unit) {
         Text(text = item.displayTitle, color = Color.White, fontSize = 14.sp, maxLines = 1, fontWeight = FontWeight.Medium)
     }
 }
+EOF
+
+# Update HomeScreen.kt with Filtering and New Sections
+cat <<EOF > app/src/main/java/com/lagradost/cloudstream3/ui/screens/HomeScreen.kt
+package com.lagradost.cloudstream3.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lagradost.cloudstream3.ui.components.*
+import com.lagradost.cloudstream3.ui.theme.Background
+import com.lagradost.cloudstream3.ui.theme.KINO_Red
+import com.lagradost.cloudstream3.ui.viewmodel.HomeViewModel
+
+@Composable
+fun HomeScreen(
+    viewModel: HomeViewModel = viewModel(),
+    onMediaClick: (Int) -> Unit,
+    onSearchClick: () -> Unit
+) {
+    val trending by viewModel.trending.collectAsState()
+    val popularMovies by viewModel.popularMovies.collectAsState()
+    val popularTv by viewModel.popularTv.collectAsState()
+    val topRated by viewModel.topRated.collectAsState()
+    val upcoming by viewModel.upcoming.collectAsState()
+    val indianMovies by viewModel.indianMovies.collectAsState()
+    val anime by viewModel.anime.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val selectedCategory by viewModel.selectedCategory.collectAsState()
+
+    Box(modifier = Modifier.fillMaxSize().background(Background)) {
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = KINO_Red)
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                item {
+                    Box {
+                        HeroBanner(trending, onMediaClick)
+                        HomeHeader(onSearchClick)
+                    }
+                }
+                item {
+                    CategoryPills(selectedCategory) { viewModel.setCategory(it) }
+                }
+                
+                when (selectedCategory) {
+                    "Trending" -> {
+                        item { ContentRow("Trending Now", trending, onMediaClick) }
+                        item { ContentRow("Top Rated", topRated, onMediaClick) }
+                    }
+                    "Movies" -> {
+                        item { ContentRow("Popular Movies", popularMovies, onMediaClick) }
+                        item { ContentRow("Upcoming", upcoming, onMediaClick) }
+                    }
+                    "Series" -> {
+                        item { ContentRow("Popular TV Shows", popularTv, onMediaClick) }
+                    }
+                    "Anime" -> {
+                        item { ContentRow("Latest Anime", anime, onMediaClick) }
+                    }
+                    "Hindi" -> {
+                        item { ContentRow("Popular Indian Movies", indianMovies, onMediaClick) }
+                    }
+                }
+                
+                // Always show some generic rows if not in a specific filter
+                if (selectedCategory == "Trending") {
+                    item { ContentRow("Indian Hits", indianMovies, onMediaClick) }
+                    item { ContentRow("Upcoming", upcoming, onMediaClick) }
+                }
+
+                item { Spacer(modifier = Modifier.height(80.dp)) }
+            }
+        }
+    }
+}
+EOF

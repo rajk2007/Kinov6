@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.lagradost.cloudstream3.ExtractorLink
 import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.SearchResponse
 import dalvik.system.DexClassLoader
 import dalvik.system.DexFile
 import java.io.File
@@ -27,14 +28,12 @@ object PluginEngine {
                 context.classLoader
             )
             
-            // Task 2: Scan for class that extends MainAPI
             val dexFile = DexFile(pluginFile)
             val entries = dexFile.entries()
             var pluginInstance: MainAPI? = null
 
             while (entries.hasMoreElements()) {
                 val className = entries.nextElement()
-                // CloudStream plugins usually have their main class in a specific package
                 if (className.contains("com.lagradost")) {
                     try {
                         val loadedClass = classLoader.loadClass(className)
@@ -57,7 +56,6 @@ object PluginEngine {
             }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to load plugin: ${pluginFile.name}", e)
-            // Task 1: Show Toast for critical loading failure
             context.mainLooper?.let {
                 android.os.Handler(it).post {
                     Toast.makeText(context, "Plugin Error (${pluginFile.name}): ${e.message}", Toast.LENGTH_LONG).show()
@@ -68,15 +66,15 @@ object PluginEngine {
 
     fun getPlugins() = loadedPlugins
 
-    suspend fun search(query: String): List<String> {
+    suspend fun search(query: String): List<SearchResponse> {
         Log.d(TAG, "Searching for: $query in ${loadedPlugins.size} plugins")
-        val results = mutableListOf<String>()
+        val results = mutableListOf<SearchResponse>()
         for (plugin in loadedPlugins) {
             try {
                 Log.d(TAG, "Calling search on plugin: ${plugin.name}")
                 val searchResults = plugin.search(query)
-                Log.d(TAG, "Plugin ${plugin.name} returned ${searchResults.size} results")
-                searchResults.forEach { results.add(it.url) }
+                Log.d(TAG, "Plugin ${plugin.name} returned ${searchResults?.size ?: 0} results")
+                searchResults?.let { results.addAll(it) }
             } catch (e: Exception) {
                 Log.e(TAG, "Error searching in plugin: ${plugin.name}", e)
             }

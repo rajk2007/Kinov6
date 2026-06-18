@@ -1,50 +1,35 @@
 package com.lagradost.cloudstream3
 
-import android.content.Context
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.runtime.*
-import com.lagradost.cloudstream3.ui.screens.MainScreen
-import com.lagradost.cloudstream3.ui.screens.RepoInstallerScreen
-import com.lagradost.cloudstream3.ui.screens.SplashScreen
-import com.lagradost.cloudstream3.ui.theme.KINOTheme
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.lagradost.nicehttp.Requests
+import com.lagradost.nicehttp.ResponseParser
+import kotlin.reflect.KClass
 
-enum class AppState {
-    Splash, RepoInstaller, Main
-}
+// Short name for requests client to make it nicer to use
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        
-        val sharedPref = getPreferences(Context.MODE_PRIVATE)
-        val reposInstalled = sharedPref.getBoolean("kino_repos_installed", false)
+var app = Requests(responseParser = object : ResponseParser {
+    val mapper: ObjectMapper = jacksonObjectMapper().configure(
+        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+        false
+    )
 
-        setContent {
-            KINOTheme {
-                var currentState by remember { mutableStateOf(AppState.Splash) }
-                
-                when (currentState) {
-                    AppState.Splash -> {
-                        SplashScreen(onNavigateToMain = {
-                            currentState = if (reposInstalled) AppState.Main else AppState.RepoInstaller
-                        })
-                    }
-                    AppState.RepoInstaller -> {
-                        RepoInstallerScreen(onFinished = {
-                            with(sharedPref.edit()) {
-                                putBoolean("kino_repos_installed", true)
-                                apply()
-                            }
-                            currentState = AppState.Main
-                        })
-                    }
-                    AppState.Main -> {
-                        MainScreen()
-                    }
-                }
-            }
+    override fun <T : Any> parse(text: String, kClass: KClass<T>): T {
+        return mapper.readValue(text, kClass.java)
+    }
+
+    override fun <T : Any> parseSafe(text: String, kClass: KClass<T>): T? {
+        return try {
+            mapper.readValue(text, kClass.java)
+        } catch (e: Exception) {
+            null
         }
     }
+
+    override fun writeValueAsString(obj: Any): String {
+        return mapper.writeValueAsString(obj)
+    }
+}).apply {
+    defaultHeaders = mapOf("user-agent" to USER_AGENT)
 }

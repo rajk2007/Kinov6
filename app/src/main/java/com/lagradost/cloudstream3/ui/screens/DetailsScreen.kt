@@ -73,7 +73,6 @@ fun DetailsScreen(
                 viewModel.resetWatchState()
             }
             is WatchUiState.Error -> {
-                // Task 1: Show long Toast with exact error message
                 Toast.makeText(context, "Error: ${state.message}", Toast.LENGTH_LONG).show()
                 viewModel.resetWatchState()
             }
@@ -105,7 +104,7 @@ fun DetailsScreen(
                 LazyColumn {
                     items(selectedLinks) { link ->
                         ListItem(
-                            headlineContent = { Text("${link.type} - ${link.name}") },
+                            headlineContent = { Text("${link.source} - ${link.name}") },
                             supportingContent = { Text("${link.quality}p") },
                             modifier = Modifier.clickable {
                                 val encodedUrl = URLEncoder.encode(link.url, StandardCharsets.UTF_8.toString())

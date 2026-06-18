@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.data.models.MediaItem
 import com.lagradost.cloudstream3.data.repository.TmdbRepository
 import com.lagradost.cloudstream3.ExtractorLink
+import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.plugins.PluginEngine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,30 +57,25 @@ class DetailsViewModel : ViewModel() {
         viewModelScope.launch {
             _watchState.value = WatchUiState.FetchingLinks
             try {
-                // Task 3: Use just the movie title for search
                 val query = media.displayTitle
-                val searchResults = PluginEngine.search(query)
+                val searchResults: List<SearchResponse> = PluginEngine.search(query)
                 
                 if (searchResults.isEmpty()) {
                     _watchState.value = WatchUiState.NoLinksFound
                     return@launch
                 }
 
-                // Task 3: Iterate through top 3 results to find links
                 val allLinks = mutableListOf<ExtractorLink>()
                 val topResults = searchResults.take(3)
                 
-                for (resultUrl in topResults) {
+                for (result in topResults) {
                     try {
-                        val links = PluginEngine.load(resultUrl)
+                        val links = PluginEngine.load(result.url)
                         if (links.isNotEmpty()) {
                             allLinks.addAll(links)
-                            // If we found links from one provider, we can stop or continue
-                            // Requirement says "iterate through top 3 results... to maximize chance"
-                            // We'll collect all from top 3
                         }
                     } catch (e: Exception) {
-                        // Log and continue to next result
+                        // Log and continue
                     }
                 }
 
@@ -89,7 +85,6 @@ class DetailsViewModel : ViewModel() {
                     _watchState.value = WatchUiState.LinksFound(allLinks)
                 }
             } catch (e: Exception) {
-                // Task 1: Expose exact error message
                 _watchState.value = WatchUiState.Error(e.message ?: "Error fetching links")
             }
         }

@@ -29,6 +29,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -39,6 +41,7 @@ import kotlin.math.abs
 
 @Composable
 fun HomeHeader(onSearchClick: () -> Unit) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,7 +64,9 @@ fun HomeHeader(onSearchClick: () -> Unit) {
             IconButton(onClick = onSearchClick) {
                 Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
             }
-            IconButton(onClick = { }) {
+            IconButton(onClick = { 
+                Toast.makeText(context, "No new notifications", Toast.LENGTH_SHORT).show()
+            }) {
                 Icon(Icons.Default.Notifications, contentDescription = "Notifications", tint = Color.White)
             }
         }

@@ -12,26 +12,8 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
     private val repository = TmdbRepository()
 
-    private val _trending = MutableStateFlow<List<MediaItem>>(emptyList())
-    val trending: StateFlow<List<MediaItem>> = _trending
-
-    private val _popularMovies = MutableStateFlow<List<MediaItem>>(emptyList())
-    val popularMovies: StateFlow<List<MediaItem>> = _popularMovies
-
-    private val _popularTv = MutableStateFlow<List<MediaItem>>(emptyList())
-    val popularTv: StateFlow<List<MediaItem>> = _popularTv
-
-    private val _topRated = MutableStateFlow<List<MediaItem>>(emptyList())
-    val topRated: StateFlow<List<MediaItem>> = _topRated
-
-    private val _upcoming = MutableStateFlow<List<MediaItem>>(emptyList())
-    val upcoming: StateFlow<List<MediaItem>> = _upcoming
-
-    private val _indianMovies = MutableStateFlow<List<MediaItem>>(emptyList())
-    val indianMovies: StateFlow<List<MediaItem>> = _indianMovies
-
-    private val _anime = MutableStateFlow<List<MediaItem>>(emptyList())
-    val anime: StateFlow<List<MediaItem>> = _anime
+    private val _rows = MutableStateFlow<Map<String, List<MediaItem>>>(emptyMap())
+    val rows: StateFlow<Map<String, List<MediaItem>>> = _rows
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -51,21 +33,37 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val trendingDef = async { repository.getTrending() }
-                val moviesDef = async { repository.getPopularMovies() }
-                val tvDef = async { repository.getPopularTv() }
-                val topRatedDef = async { repository.getTopRatedMovies() }
-                val upcomingDef = async { repository.getUpcomingMovies() }
-                val indianDef = async { repository.getIndianMovies() }
-                val animeDef = async { repository.getAnime() }
+                val trending = async { repository.getTrending() }
+                val popularKino = async { repository.getPopularMovies() }
+                val newReleases = async { repository.getNowPlaying() }
+                val hollywood = async { repository.getHollywood() }
+                val bollywood = async { repository.getBollywood() }
+                val korean = async { repository.getKoreanDrama() }
+                val japanese = async { repository.getJapanese() }
+                val anime = async { repository.getAnime() }
+                val tvSeries = async { repository.getPopularTv() }
+                val topRated = async { repository.getTopRatedMovies() }
+                val action = async { repository.getAction() }
+                val comedy = async { repository.getComedy() }
+                val horror = async { repository.getHorror() }
+                val sciFi = async { repository.getSciFi() }
 
-                _trending.value = trendingDef.await()
-                _popularMovies.value = moviesDef.await()
-                _popularTv.value = tvDef.await()
-                _topRated.value = topRatedDef.await()
-                _upcoming.value = upcomingDef.await()
-                _indianMovies.value = indianDef.await()
-                _anime.value = animeDef.await()
+                _rows.value = mapOf(
+                    "Trending Now" to trending.await(),
+                    "Popular on KINO" to popularKino.await(),
+                    "New Releases" to newReleases.await(),
+                    "Hollywood Movies" to hollywood.await(),
+                    "Bollywood Movies" to bollywood.await(),
+                    "Korean Drama & Movies" to korean.await(),
+                    "Japanese Movies & Anime" to japanese.await(),
+                    "Anime" to anime.await(),
+                    "TV Series" to tvSeries.await(),
+                    "Top Rated" to topRated.await(),
+                    "Action & Adventure" to action.await(),
+                    "Comedy" to comedy.await(),
+                    "Horror & Thriller" to horror.await(),
+                    "Sci-Fi & Fantasy" to sciFi.await()
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {

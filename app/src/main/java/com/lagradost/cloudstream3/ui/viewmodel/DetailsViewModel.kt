@@ -56,7 +56,8 @@ class DetailsViewModel : ViewModel() {
         viewModelScope.launch {
             _watchState.value = WatchUiState.FetchingLinks
             try {
-                val query = "${media.displayTitle} ${media.displayDate}"
+                // Task 3: Use just the movie title for search
+                val query = media.displayTitle
                 val searchResults = PluginEngine.search(query)
                 
                 if (searchResults.isEmpty()) {
@@ -64,14 +65,31 @@ class DetailsViewModel : ViewModel() {
                     return@launch
                 }
 
-                // Try the first result
-                val links = PluginEngine.load(searchResults.first())
-                if (links.isEmpty()) {
+                // Task 3: Iterate through top 3 results to find links
+                val allLinks = mutableListOf<ExtractorLink>()
+                val topResults = searchResults.take(3)
+                
+                for (resultUrl in topResults) {
+                    try {
+                        val links = PluginEngine.load(resultUrl)
+                        if (links.isNotEmpty()) {
+                            allLinks.addAll(links)
+                            // If we found links from one provider, we can stop or continue
+                            // Requirement says "iterate through top 3 results... to maximize chance"
+                            // We'll collect all from top 3
+                        }
+                    } catch (e: Exception) {
+                        // Log and continue to next result
+                    }
+                }
+
+                if (allLinks.isEmpty()) {
                     _watchState.value = WatchUiState.NoLinksFound
                 } else {
-                    _watchState.value = WatchUiState.LinksFound(links)
+                    _watchState.value = WatchUiState.LinksFound(allLinks)
                 }
             } catch (e: Exception) {
+                // Task 1: Expose exact error message
                 _watchState.value = WatchUiState.Error(e.message ?: "Error fetching links")
             }
         }

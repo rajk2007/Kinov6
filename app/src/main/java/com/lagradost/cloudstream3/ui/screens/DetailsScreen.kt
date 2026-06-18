@@ -73,7 +73,8 @@ fun DetailsScreen(
                 viewModel.resetWatchState()
             }
             is WatchUiState.Error -> {
-                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                // Task 1: Show long Toast with exact error message
+                Toast.makeText(context, "Error: ${state.message}", Toast.LENGTH_LONG).show()
                 viewModel.resetWatchState()
             }
             else -> {}

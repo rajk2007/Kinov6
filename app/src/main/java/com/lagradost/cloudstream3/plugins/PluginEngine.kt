@@ -2,9 +2,11 @@ package com.lagradost.cloudstream3.plugins
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.lagradost.cloudstream3.ExtractorLink
 import com.lagradost.cloudstream3.MainAPI
 import dalvik.system.DexClassLoader
+import dalvik.system.DexFile
 import java.io.File
 
 object PluginEngine {
@@ -14,7 +16,10 @@ object PluginEngine {
     fun loadPlugin(context: Context, pluginFile: File) {
         Log.d(TAG, "Starting to load plugin from: ${pluginFile.absolutePath}")
         try {
-            Log.d(TAG, "Creating DexClassLoader for ${pluginFile.name}")
+            if (pluginFile.length() == 0L) {
+                throw Exception("Plugin file is 0 bytes")
+            }
+
             val classLoader = DexClassLoader(
                 pluginFile.absolutePath,
                 context.codeCacheDir.absolutePath,
@@ -22,23 +27,42 @@ object PluginEngine {
                 context.classLoader
             )
             
-            // In CloudStream plugins, the main class is often com.lagradost.cloudstream3.plugins.Plugin
-            // We'll try to find it or similar
-            Log.d(TAG, "Attempting to load class: com.lagradost.cloudstream3.MainPlugin")
-            val pluginClass = try {
-                classLoader.loadClass("com.lagradost.cloudstream3.MainPlugin")
-            } catch (e: Exception) {
-                Log.w(TAG, "MainPlugin class not found, trying com.lagradost.cloudstream3.plugins.Plugin")
-                classLoader.loadClass("com.lagradost.cloudstream3.plugins.Plugin")
+            // Task 2: Scan for class that extends MainAPI
+            val dexFile = DexFile(pluginFile)
+            val entries = dexFile.entries()
+            var pluginInstance: MainAPI? = null
+
+            while (entries.hasMoreElements()) {
+                val className = entries.nextElement()
+                // CloudStream plugins usually have their main class in a specific package
+                if (className.contains("com.lagradost")) {
+                    try {
+                        val loadedClass = classLoader.loadClass(className)
+                        if (MainAPI::class.java.isAssignableFrom(loadedClass) && loadedClass != MainAPI::class.java) {
+                            Log.d(TAG, "Found valid plugin class: $className")
+                            pluginInstance = loadedClass.getDeclaredConstructor().newInstance() as MainAPI
+                            break
+                        }
+                    } catch (e: Exception) {
+                        // Skip classes that can't be loaded or instantiated
+                    }
+                }
             }
             
-            Log.d(TAG, "Instantiating plugin class: ${pluginClass.name}")
-            val pluginInstance = pluginClass.getDeclaredConstructor().newInstance() as MainAPI
-            
-            Log.d(TAG, "Successfully loaded plugin: ${pluginInstance.name}")
-            loadedPlugins.add(pluginInstance)
+            if (pluginInstance != null) {
+                Log.d(TAG, "Successfully loaded plugin: ${pluginInstance.name}")
+                loadedPlugins.add(pluginInstance)
+            } else {
+                throw Exception("No valid MainAPI class found in ${pluginFile.name}")
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to load plugin: ${pluginFile.name}", e)
+            // Task 1: Show Toast for critical loading failure
+            context.mainLooper?.let {
+                android.os.Handler(it).post {
+                    Toast.makeText(context, "Plugin Error (${pluginFile.name}): ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 

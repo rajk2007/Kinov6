@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.lagradost.cloudstream3.data.models.MediaItem
-import com.lagradost.cloudstream3.plugins.ExtractorLink
+import com.lagradost.cloudstream3.ExtractorLink
 import com.lagradost.cloudstream3.ui.components.ContentRow
 import com.lagradost.cloudstream3.ui.theme.Background
 import com.lagradost.cloudstream3.ui.theme.KINO_Red
@@ -104,7 +104,7 @@ fun DetailsScreen(
                 LazyColumn {
                     items(selectedLinks) { link ->
                         ListItem(
-                            headlineContent = { Text("${link.source} - ${link.name}") },
+                            headlineContent = { Text("${link.type} - ${link.name}") },
                             supportingContent = { Text("${link.quality}p") },
                             modifier = Modifier.clickable {
                                 val encodedUrl = URLEncoder.encode(link.url, StandardCharsets.UTF_8.toString())

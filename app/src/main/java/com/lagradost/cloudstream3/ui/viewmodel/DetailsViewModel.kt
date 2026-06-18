@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lagradost.cloudstream3.data.models.MediaItem
 import com.lagradost.cloudstream3.data.repository.TmdbRepository
-import com.lagradost.cloudstream3.plugins.ExtractorLink
+import com.lagradost.cloudstream3.ExtractorLink
 import com.lagradost.cloudstream3.plugins.PluginEngine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

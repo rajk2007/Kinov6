@@ -55,7 +55,7 @@ class HomeViewModel : ViewModel() {
                     "Hollywood Movies" to hollywood.await(),
                     "Bollywood Movies" to bollywood.await(),
                     "Korean Drama & Movies" to korean.await(),
-                    "Japanese Movies & Anime" to japanese.await(),
+                    "Japanese Movies" to japanese.await(),
                     "Anime" to anime.await(),
                     "TV Series" to tvSeries.await(),
                     "Top Rated" to topRated.await(),

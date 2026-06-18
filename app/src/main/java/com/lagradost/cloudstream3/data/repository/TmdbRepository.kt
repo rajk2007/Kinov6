@@ -21,7 +21,7 @@ class TmdbRepository {
     suspend fun getBollywood(): List<MediaItem> = api.discoverMovies(apiKey, language = "hi").results
     suspend fun getKoreanDrama(): List<MediaItem> = api.discoverTv(apiKey, language = "ko").results
     suspend fun getJapanese(): List<MediaItem> = api.discoverMovies(apiKey, language = "ja").results
-    suspend fun getAnime(): List<MediaItem> = api.discoverTv(apiKey, genres = "16").results
+    suspend fun getAnime(): List<MediaItem> = api.discoverTv(apiKey, genres = "16", language = "ja").results
     suspend fun getPopularTv(): List<MediaItem> = api.getPopularTv(apiKey = apiKey).results
     suspend fun getTopRatedMovies(): List<MediaItem> = api.getTopRatedMovies(apiKey = apiKey).results
     suspend fun getAction(): List<MediaItem> = api.discoverMovies(apiKey, genres = "28").results

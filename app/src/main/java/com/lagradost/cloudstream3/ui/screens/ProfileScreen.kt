@@ -58,18 +58,18 @@ fun ProfileScreen() {
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.PlayArrow, "Auto-play next episode")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Refresh, "Skip intro")
+                SettingItem(Icons.Default.Forward10, "Skip intro")
             }
         }
 
         item { SectionTitle("Language Settings") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Public, "App language")
+                SettingItem(Icons.Default.Language, "App language")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.PlayArrow, "Audio language")
+                SettingItem(Icons.Default.Audiotrack, "Audio language")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.List, "Subtitle language")
+                SettingItem(Icons.Default.Subtitles, "Subtitle language")
             }
         }
 
@@ -77,9 +77,9 @@ fun ProfileScreen() {
         item { ThemeGrid() }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Build, "Dynamic colors toggle")
+                SettingItem(Icons.Default.Palette, "Dynamic colors toggle")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Info, "Poster size (Small/Medium/Large)")
+                SettingItem(Icons.Default.AspectRatio, "Poster size (Small/Medium/Large)")
             }
         }
 
@@ -88,20 +88,20 @@ fun ProfileScreen() {
             SettingsCard {
                 SettingItem(Icons.Default.Notifications, "New episode alerts")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Notifications, "Release reminders")
+                SettingItem(Icons.Default.NotificationsActive, "Release reminders")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Check, "Download completed")
+                SettingItem(Icons.Default.Download, "Download completed")
             }
         }
 
         item { SectionTitle("Extensions Manager") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Build, "Installed extensions")
+                SettingItem(Icons.Default.Extension, "Installed extensions")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.CheckCircle, "Enable/disable sources")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Refresh, "Update plugins")
+                SettingItem(Icons.Default.Update, "Update plugins")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.Add, "Add repository URL")
             }
@@ -112,7 +112,7 @@ fun ProfileScreen() {
             SettingsCard {
                 SettingItem(Icons.Default.Lock, "App lock (PIN/Fingerprint)")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Delete, "Clear watch history")
+                SettingItem(Icons.Default.History, "Clear watch history")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.ExitToApp, "Sign out", tint = KINO_Red)
             }
@@ -121,11 +121,11 @@ fun ProfileScreen() {
         item { SectionTitle("Support") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Info, "Help Center")
+                SettingItem(Icons.Default.Help, "Help Center")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Warning, "Report a problem")
+                SettingItem(Icons.Default.Report, "Report a problem")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Email, "Request a feature")
+                SettingItem(Icons.Default.Feedback, "Request a feature")
             }
         }
 
@@ -136,9 +136,9 @@ fun ProfileScreen() {
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.Person, "Developer info")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Info, "What's New")
+                SettingItem(Icons.Default.NewReleases, "What's New")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Lock, "Privacy Policy")
+                SettingItem(Icons.Default.PrivacyTip, "Privacy Policy")
             }
         }
 

@@ -18,5 +18,11 @@ class TmdbRepository {
     suspend fun getPopularMovies(): List<MediaItem> = api.getPopularMovies(apiKey = apiKey).results
     suspend fun getPopularTv(): List<MediaItem> = api.getPopularTv(apiKey = apiKey).results
     suspend fun getTopRatedMovies(): List<MediaItem> = api.getTopRatedMovies(apiKey = apiKey).results
+    suspend fun getUpcomingMovies(): List<MediaItem> = api.getUpcomingMovies(apiKey = apiKey).results
+    suspend fun getIndianMovies(): List<MediaItem> = api.getIndianMovies(apiKey = apiKey).results
     suspend fun getAnime(): List<MediaItem> = api.getAnime(apiKey = apiKey).results
+    
+    suspend fun getMovieDetails(movieId: Int): MediaItem = api.getMovieDetails(movieId, apiKey)
+    suspend fun getSimilarMovies(movieId: Int): List<MediaItem> = api.getSimilarMovies(movieId, apiKey).results
+    suspend fun search(query: String): List<MediaItem> = api.searchMulti(apiKey, query).results
 }

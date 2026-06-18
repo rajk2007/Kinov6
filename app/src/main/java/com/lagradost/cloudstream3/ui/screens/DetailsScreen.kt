@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -34,6 +36,7 @@ fun DetailsScreen(
     onBackClick: () -> Unit,
     onMediaClick: (Int) -> Unit
 ) {
+    val context = LocalContext.current
     val repository = remember { TmdbRepository() }
     var mediaItem by remember { mutableStateOf<MediaItem?>(null) }
     var similarItems by remember { mutableStateOf<List<MediaItem>>(emptyList()) }
@@ -111,7 +114,9 @@ fun DetailsScreen(
                     item {
                         Column(modifier = Modifier.padding(horizontal = 16.dp).offset(y = (-40).dp)) {
                             Button(
-                                onClick = { },
+                                onClick = { 
+                                    Toast.makeText(context, "Loading sources...", Toast.LENGTH_SHORT).show()
+                                },
                                 colors = ButtonDefaults.buttonColors(containerColor = KINO_Red),
                                 shape = RoundedCornerShape(24.dp),
                                 modifier = Modifier.fillMaxWidth().height(50.dp)

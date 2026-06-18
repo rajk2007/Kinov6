@@ -1,9 +1,8 @@
 package com.lagradost.cloudstream3.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,13 +13,12 @@ import com.lagradost.cloudstream3.ui.theme.Background
 import com.lagradost.cloudstream3.ui.theme.KINO_Red
 import com.lagradost.cloudstream3.ui.theme.TextPrimary
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 data class Repo(val name: String, val url: String, var progress: Float = 0f, var isDone: Boolean = false)
 
 @Composable
 fun RepoInstallerScreen(onFinished: () -> Unit) {
-    val scope = rememberCoroutineScope()
+    val TAG = "KINO_Repo"
     val repos = remember {
         mutableStateListOf(
             Repo("MegaRepo", "https://raw.githubusercontent.com/self-similarity/MegaRepo/builds/repo.json"),
@@ -33,15 +31,28 @@ fun RepoInstallerScreen(onFinished: () -> Unit) {
     var allDone by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        Log.d(TAG, "Starting repository initialization")
         for (i in repos.indices) {
             currentRepoIndex = i
-            // Simulate downloading and loading
-            for (p in 1..10) {
-                delay(200)
-                repos[i] = repos[i].copy(progress = p / 10f)
+            val repo = repos[i]
+            Log.d(TAG, "Processing repo: ${repo.name} at ${repo.url}")
+            
+            try {
+                // In a real app, this would be an actual network call
+                // Log.d(TAG, "Downloading repo JSON from ${repo.url}")
+                
+                // Simulate downloading and loading
+                for (p in 1..10) {
+                    delay(200)
+                    repos[i] = repos[i].copy(progress = p / 10f)
+                }
+                Log.d(TAG, "Successfully processed repo: ${repo.name}")
+                repos[i] = repos[i].copy(isDone = true)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to process repo: ${repo.name}", e)
             }
-            repos[i] = repos[i].copy(isDone = true)
         }
+        Log.d(TAG, "All repositories processed")
         allDone = true
     }
 

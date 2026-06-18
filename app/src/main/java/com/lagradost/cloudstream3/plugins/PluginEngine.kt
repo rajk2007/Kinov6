@@ -1,21 +1,20 @@
 package com.lagradost.cloudstream3.plugins
 
 import android.content.Context
+import android.util.Log
+import com.lagradost.cloudstream3.ExtractorLink
+import com.lagradost.cloudstream3.MainAPI
 import dalvik.system.DexClassLoader
 import java.io.File
 
-data class ExtractorLink(
-    val name: String,
-    val source: String,
-    val url: String,
-    val quality: Int
-)
-
 object PluginEngine {
-    private val loadedPlugins = mutableListOf<Any>()
+    private val loadedPlugins = mutableListOf<MainAPI>()
+    private const val TAG = "KINO_Plugin"
 
     fun loadPlugin(context: Context, pluginFile: File) {
+        Log.d(TAG, "Starting to load plugin from: ${pluginFile.absolutePath}")
         try {
+            Log.d(TAG, "Creating DexClassLoader for ${pluginFile.name}")
             val classLoader = DexClassLoader(
                 pluginFile.absolutePath,
                 context.codeCacheDir.absolutePath,
@@ -23,53 +22,61 @@ object PluginEngine {
                 context.classLoader
             )
             
-            val pluginClass = classLoader.loadClass("com.lagradost.cloudstream3.MainPlugin")
-            val pluginInstance = pluginClass.getDeclaredConstructor().newInstance()
+            // In CloudStream plugins, the main class is often com.lagradost.cloudstream3.plugins.Plugin
+            // We'll try to find it or similar
+            Log.d(TAG, "Attempting to load class: com.lagradost.cloudstream3.MainPlugin")
+            val pluginClass = try {
+                classLoader.loadClass("com.lagradost.cloudstream3.MainPlugin")
+            } catch (e: Exception) {
+                Log.w(TAG, "MainPlugin class not found, trying com.lagradost.cloudstream3.plugins.Plugin")
+                classLoader.loadClass("com.lagradost.cloudstream3.plugins.Plugin")
+            }
             
+            Log.d(TAG, "Instantiating plugin class: ${pluginClass.name}")
+            val pluginInstance = pluginClass.getDeclaredConstructor().newInstance() as MainAPI
+            
+            Log.d(TAG, "Successfully loaded plugin: ${pluginInstance.name}")
             loadedPlugins.add(pluginInstance)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "Failed to load plugin: ${pluginFile.name}", e)
         }
     }
 
     fun getPlugins() = loadedPlugins
 
     suspend fun search(query: String): List<String> {
+        Log.d(TAG, "Searching for: $query in ${loadedPlugins.size} plugins")
         val results = mutableListOf<String>()
         for (plugin in loadedPlugins) {
             try {
-                val method = plugin.javaClass.getMethod("search", String::class.java)
-                val result = method.invoke(plugin, query) as? List<*>
-                result?.filterIsInstance<String>()?.let { results.addAll(it) }
+                Log.d(TAG, "Calling search on plugin: ${plugin.name}")
+                val searchResults = plugin.search(query)
+                Log.d(TAG, "Plugin ${plugin.name} returned ${searchResults.size} results")
+                searchResults.forEach { results.add(it.url) }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "Error searching in plugin: ${plugin.name}", e)
             }
         }
         return results
     }
 
     suspend fun load(url: String): List<ExtractorLink> {
+        Log.d(TAG, "Loading links for URL: $url")
         val links = mutableListOf<ExtractorLink>()
         for (plugin in loadedPlugins) {
             try {
-                val method = plugin.javaClass.getMethod("load", String::class.java)
-                val result = method.invoke(plugin, url) as? List<*>
-                result?.forEach { item ->
-                    // Use reflection to map to ExtractorLink if needed, 
-                    // but for now we assume the plugin returns objects that can be cast or mapped
-                    if (item != null) {
-                        val name = item.javaClass.getMethod("getName").invoke(item) as String
-                        val source = item.javaClass.getMethod("getSource").invoke(item) as String
-                        val linkUrl = item.javaClass.getMethod("getUrl").invoke(item) as String
-                        val quality = item.javaClass.getMethod("getQuality").invoke(item) as Int
-                        links.add(ExtractorLink(name, source, linkUrl, quality))
-                    }
-                }
+                Log.d(TAG, "Calling loadLinks on plugin: ${plugin.name}")
+                plugin.loadLinks(url, callback = { link ->
+                    Log.d(TAG, "Found link: ${link.name} - ${link.url}")
+                    links.add(link)
+                })
             } catch (e: Exception) {
-                // If it fails on one plugin, try the next
-                continue
+                Log.e(TAG, "Error loading links in plugin: ${plugin.name}", e)
             }
-            if (links.isNotEmpty()) break // Found links in one plugin, stop
+            if (links.isNotEmpty()) {
+                Log.d(TAG, "Found ${links.size} links, stopping search")
+                break
+            }
         }
         return links
     }

@@ -88,8 +88,12 @@ fun MainScreen() {
                     onMediaClick = { mediaId -> navController.navigate("details/$mediaId") }
                 ) 
             }
-            composable(Screen.Library.route) { PlaceholderScreen("Library") }
-            composable(Screen.Profile.route) { PlaceholderScreen("Profile") }
+            composable(Screen.Library.route) { 
+                LibraryScreen(
+                    onMediaClick = { mediaId -> navController.navigate("details/$mediaId") }
+                ) 
+            }
+            composable(Screen.Profile.route) { ProfileScreen() }
             composable(
                 route = "details/{mediaId}",
                 arguments = listOf(navArgument("mediaId") { type = NavType.IntType })

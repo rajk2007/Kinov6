@@ -141,7 +141,7 @@ fun DetailsScreen(
 
                     item {
                         Spacer(modifier = Modifier.height(16.dp))
-                        ContentRow(title = "More Like This", items = similarItems)
+                        ContentRow(title = "More Like This", items = similarItems, onMediaClick = onMediaClick)
                     }
                     
                     item {

@@ -1,3 +1,4 @@
+@file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 package com.lagradost.cloudstream3.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState

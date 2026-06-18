@@ -1,8 +1,10 @@
 package com.lagradost.cloudstream3.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -15,50 +17,120 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.lagradost.cloudstream3.data.models.MediaItem
-import com.lagradost.cloudstream3.data.repository.TmdbRepository
+import com.lagradost.cloudstream3.plugins.ExtractorLink
 import com.lagradost.cloudstream3.ui.components.ContentRow
 import com.lagradost.cloudstream3.ui.theme.Background
 import com.lagradost.cloudstream3.ui.theme.KINO_Red
 import com.lagradost.cloudstream3.ui.theme.TextMuted
 import com.lagradost.cloudstream3.ui.theme.TextPrimary
+import com.lagradost.cloudstream3.ui.viewmodel.DetailsUiState
+import com.lagradost.cloudstream3.ui.viewmodel.DetailsViewModel
+import com.lagradost.cloudstream3.ui.viewmodel.WatchUiState
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(
     mediaId: Int,
     onBackClick: () -> Unit,
-    onMediaClick: (Int) -> Unit
+    onMediaClick: (Int) -> Unit,
+    onWatchClick: (String, String) -> Unit,
+    viewModel: DetailsViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val repository = remember { TmdbRepository() }
-    var mediaItem by remember { mutableStateOf<MediaItem?>(null) }
-    var similarItems by remember { mutableStateOf<List<MediaItem>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
+    val uiState by viewModel.uiState.collectAsState()
+    val watchState by viewModel.watchState.collectAsState()
+    var showSourceSheet by remember { mutableStateOf(false) }
+    var selectedLinks by remember { mutableStateOf<List<ExtractorLink>>(emptyList()) }
 
     LaunchedEffect(mediaId) {
-        isLoading = true
-        try {
-            mediaItem = repository.getMovieDetails(mediaId)
-            similarItems = repository.getSimilarMovies(mediaId)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            isLoading = false
+        viewModel.fetchDetails(mediaId)
+    }
+
+    LaunchedEffect(watchState) {
+        when (val state = watchState) {
+            is WatchUiState.LinksFound -> {
+                if (state.links.size == 1) {
+                    val encodedUrl = URLEncoder.encode(state.links.first().url, StandardCharsets.UTF_8.toString())
+                    onWatchClick(encodedUrl, "Video")
+                    viewModel.resetWatchState()
+                } else {
+                    selectedLinks = state.links
+                    showSourceSheet = true
+                }
+            }
+            is WatchUiState.NoLinksFound -> {
+                Toast.makeText(context, "No sources found for this title.", Toast.LENGTH_SHORT).show()
+                viewModel.resetWatchState()
+            }
+            is WatchUiState.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                viewModel.resetWatchState()
+            }
+            else -> {}
+        }
+    }
+
+    if (showSourceSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { 
+                showSourceSheet = false 
+                viewModel.resetWatchState()
+            },
+            containerColor = Background,
+            contentColor = Color.White
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .navigationBarsPadding()
+            ) {
+                Text(
+                    text = "Select Source",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                LazyColumn {
+                    items(selectedLinks) { link ->
+                        ListItem(
+                            headlineContent = { Text("${link.source} - ${link.name}") },
+                            supportingContent = { Text("${link.quality}p") },
+                            modifier = Modifier.clickable {
+                                val encodedUrl = URLEncoder.encode(link.url, StandardCharsets.UTF_8.toString())
+                                onWatchClick(encodedUrl, link.name)
+                                showSourceSheet = false
+                                viewModel.resetWatchState()
+                            },
+                            colors = ListItemDefaults.colors(
+                                containerColor = Color.Transparent,
+                                headlineColor = Color.White,
+                                supportingColor = TextMuted
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 
     Box(modifier = Modifier.fillMaxSize().background(Background)) {
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = KINO_Red)
-        } else {
-            mediaItem?.let { item ->
+        when (val state = uiState) {
+            is DetailsUiState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = KINO_Red)
+            }
+            is DetailsUiState.Success -> {
+                val item = state.media
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
                         Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
@@ -115,15 +187,20 @@ fun DetailsScreen(
                         Column(modifier = Modifier.padding(horizontal = 16.dp).offset(y = (-40).dp)) {
                             Button(
                                 onClick = { 
-                                    Toast.makeText(context, "Loading sources...", Toast.LENGTH_SHORT).show()
+                                    viewModel.watchNow(item)
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = KINO_Red),
                                 shape = RoundedCornerShape(24.dp),
-                                modifier = Modifier.fillMaxWidth().height(50.dp)
+                                modifier = Modifier.fillMaxWidth().height(50.dp),
+                                enabled = watchState !is WatchUiState.FetchingLinks
                             ) {
-                                Icon(Icons.Default.PlayArrow, contentDescription = null)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Watch Now", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                if (watchState is WatchUiState.FetchingLinks) {
+                                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White, strokeWidth = 2.dp)
+                                } else {
+                                    Icon(Icons.Default.PlayArrow, contentDescription = null)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Watch Now", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                }
                             }
                             
                             Spacer(modifier = Modifier.height(24.dp))
@@ -146,7 +223,7 @@ fun DetailsScreen(
 
                     item {
                         Spacer(modifier = Modifier.height(16.dp))
-                        ContentRow(title = "More Like This", items = similarItems, onMediaClick = onMediaClick)
+                        ContentRow(title = "More Like This", items = state.similar, onMediaClick = onMediaClick)
                     }
                     
                     item {
@@ -154,6 +231,15 @@ fun DetailsScreen(
                     }
                 }
             }
+            is DetailsUiState.Error -> {
+                Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = state.message, color = Color.White)
+                    Button(onClick = { viewModel.fetchDetails(mediaId) }) {
+                        Text("Retry")
+                    }
+                }
+            }
+            else -> {}
         }
     }
 }

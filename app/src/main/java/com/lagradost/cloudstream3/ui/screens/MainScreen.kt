@@ -24,6 +24,8 @@ import com.lagradost.cloudstream3.ui.theme.Background
 import com.lagradost.cloudstream3.ui.theme.KINO_Red
 import com.lagradost.cloudstream3.ui.theme.TextMuted
 import com.lagradost.cloudstream3.ui.theme.TextPrimary
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
     object Home : Screen("home", "Home", Icons.Default.Home)
@@ -115,7 +117,27 @@ fun MainScreen() {
                 DetailsScreen(
                     mediaId = mediaId,
                     onBackClick = { navController.popBackStack() },
-                    onMediaClick = { id -> navController.navigate("details/$id") }
+                    onMediaClick = { id -> navController.navigate("details/$id") },
+                    onWatchClick = { videoUrl, videoName -> 
+                        navController.navigate("player/$videoUrl/$videoName")
+                    }
+                )
+            }
+            composable(
+                route = "player/{videoUrl}/{videoName}",
+                arguments = listOf(
+                    navArgument("videoUrl") { type = NavType.StringType },
+                    navArgument("videoName") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val encodedUrl = backStackEntry.arguments?.getString("videoUrl") ?: return@composable
+                val videoName = backStackEntry.arguments?.getString("videoName") ?: "Video"
+                val decodedUrl = URLDecoder.decode(encodedUrl, StandardCharsets.UTF_8.toString())
+                
+                VideoPlayerScreen(
+                    videoUrl = decodedUrl,
+                    videoName = videoName,
+                    onBackClick = { navController.popBackStack() }
                 )
             }
         }

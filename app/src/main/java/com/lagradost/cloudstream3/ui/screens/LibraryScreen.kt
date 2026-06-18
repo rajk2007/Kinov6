@@ -130,7 +130,8 @@ fun MediaGridTab(onMediaClick: (Int) -> Unit) {
                     firstAirDate = "2024",
                     voteAverage = 8.5,
                     genreIds = emptyList(),
-                    overview = "Sample Overview"
+                    overview = "Sample Overview",
+                    popularity = 0.0
                 ),
                 onMediaClick = onMediaClick
             )

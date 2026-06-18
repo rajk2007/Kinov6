@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lagradost.cloudstream3.ui.theme.KINO_Gold
@@ -29,9 +30,12 @@ import com.lagradost.cloudstream3.ui.theme.TextMuted
 
 val AMOLED_Black = Color(0xFF080808)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
-    val context = LocalContext.current
+fun ProfileScreen(onSettingClick: (String) -> Unit) {
+    var showAboutSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -42,37 +46,25 @@ fun ProfileScreen() {
         item { SectionTitle("Account") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Edit, "Edit Profile")
+                SettingItem(Icons.Default.Edit, "Edit Profile", onClick = { onSettingClick("Edit Profile") })
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Star, "Membership")
+                SettingItem(Icons.Default.Star, "Membership", onClick = { onSettingClick("Membership") })
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.AccountBox, "Profiles")
+                SettingItem(Icons.Default.AccountBox, "Profiles", onClick = { onSettingClick("Profiles") })
             }
         }
 
         item { SectionTitle("Playback Settings") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Settings, "Default video quality")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Info, "Preferred audio language")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Info, "Preferred subtitle language")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.PlayArrow, "Auto-play next episode")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Forward10, "Skip intro")
+                SettingItem(Icons.Default.Settings, "Playback Settings", onClick = { onSettingClick("Playback Settings") })
             }
         }
 
         item { SectionTitle("Language Settings") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Language, "App language")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Audiotrack, "Audio language")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Subtitles, "Subtitle language")
+                SettingItem(Icons.Default.Language, "Language Settings", onClick = { onSettingClick("Language Settings") })
             }
         }
 
@@ -80,72 +72,96 @@ fun ProfileScreen() {
         item { ThemeGrid() }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Palette, "Dynamic colors toggle")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.AspectRatio, "Poster size (Small/Medium/Large)")
+                SettingItem(Icons.Default.Palette, "Appearance", onClick = { onSettingClick("Appearance") })
             }
         }
 
         item { SectionTitle("Notifications") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Notifications, "New episode alerts")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.NotificationsActive, "Release reminders")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Download, "Download completed")
+                SettingItem(Icons.Default.Notifications, "Notifications", onClick = { onSettingClick("Notifications") })
             }
         }
 
         item { SectionTitle("Extensions Manager") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Extension, "Installed extensions")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.CheckCircle, "Enable/disable sources")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Update, "Update plugins")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Add, "Add repository URL")
+                SettingItem(Icons.Default.Extension, "Extensions Manager", onClick = { onSettingClick("Extensions Manager") })
             }
         }
 
         item { SectionTitle("Privacy & Security") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Lock, "App lock (PIN/Fingerprint)")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.History, "Clear watch history")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.ExitToApp, "Sign out", tint = KINO_Red)
+                SettingItem(Icons.Default.Lock, "Privacy & Security", onClick = { onSettingClick("Privacy & Security") })
             }
         }
 
         item { SectionTitle("Support") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Help, "Help Center")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Report, "Report a problem")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Feedback, "Request a feature")
+                SettingItem(Icons.Default.Help, "Support", onClick = { onSettingClick("Support") })
             }
         }
 
         item { SectionTitle("About Kino") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Info, "Version info")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Person, "Developer info")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.NewReleases, "What's New")
-                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.PrivacyTip, "Privacy Policy")
+                SettingItem(Icons.Default.Info, "About Kino", onClick = { showAboutSheet = true })
             }
         }
 
         item { Spacer(modifier = Modifier.height(100.dp)) }
+    }
+
+    if (showAboutSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showAboutSheet = false },
+            sheetState = sheetState,
+            containerColor = Color(0xFF121212),
+            contentColor = Color.White
+        ) {
+            AboutKinoContent()
+        }
+    }
+}
+
+@Composable
+fun AboutKinoContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "KINO",
+            color = KINO_Red,
+            fontSize = 48.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 4.sp
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Cinema. Redefined.",
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "Version 1.0.0",
+            color = TextMuted,
+            fontSize = 14.sp
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "by Raj Karmakar",
+            color = KINO_Gold,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
@@ -222,14 +238,11 @@ fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
 }
 
 @Composable
-fun SettingItem(icon: ImageVector, title: String, tint: Color = Color.White) {
-    val context = LocalContext.current
+fun SettingItem(icon: ImageVector, title: String, tint: Color = Color.White, onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { 
-                Toast.makeText(context, "$title coming soon!", Toast.LENGTH_SHORT).show()
-            }
+            .clickable { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

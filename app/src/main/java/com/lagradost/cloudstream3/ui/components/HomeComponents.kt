@@ -61,9 +61,6 @@ fun HomeHeader(onSearchClick: () -> Unit) {
             fontWeight = FontWeight.Bold
         )
         Row {
-            IconButton(onClick = onSearchClick) {
-                Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
-            }
             IconButton(onClick = { 
                 Toast.makeText(context, "No new notifications", Toast.LENGTH_SHORT).show()
             }) {

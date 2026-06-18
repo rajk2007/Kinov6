@@ -94,7 +94,19 @@ fun MainScreen() {
                     onMediaClick = { mediaId -> navController.navigate("details/$mediaId") }
                 ) 
             }
-            composable(Screen.Profile.route) { ProfileScreen() }
+            composable(Screen.Profile.route) { 
+                ProfileScreen(onSettingClick = { title -> navController.navigate("settings/$title") }) 
+            }
+            composable(
+                route = "settings/{title}",
+                arguments = listOf(navArgument("title") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val title = backStackEntry.arguments?.getString("title") ?: return@composable
+                SettingsDetailScreen(
+                    title = title,
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
             composable(
                 route = "details/{mediaId}",
                 arguments = listOf(navArgument("mediaId") { type = NavType.IntType })

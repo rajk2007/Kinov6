@@ -41,7 +41,7 @@ fun ProfileScreen() {
         
         item { SectionTitle("Settings") }
         item { SettingItem(Icons.Default.PlayArrow, "Playback Settings", "Quality, Subtitles, etc.") }
-        item { SettingItem(Icons.Default.Language, "Language Settings", "App language and audio") }
+        item { SettingItem(Icons.Default.Settings, "Language Settings", "App language and audio") }
         
         item { SectionTitle("Theme") }
         item { ThemeGrid() }

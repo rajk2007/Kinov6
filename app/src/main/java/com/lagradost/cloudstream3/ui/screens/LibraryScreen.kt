@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,9 +46,11 @@ fun LibraryScreen(onMediaClick: (Int) -> Unit) {
             contentColor = KINO_Red,
             edgePadding = 16.dp,
             indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    color = KINO_Red
+                Box(
+                    Modifier
+                        .tabIndicatorOffset(tabPositions[selectedTabIndex])
+                        .height(3.dp)
+                        .background(Color.Red)
                 )
             },
             divider = {}
@@ -120,9 +123,14 @@ fun MediaGridTab(onMediaClick: (Int) -> Unit) {
                 item = MediaItem(
                     id = 1,
                     title = "Sample Movie",
+                    name = "Sample Movie",
                     posterPath = "/kuf6evRcwEkH8sn30Sbp9L9B446.jpg",
+                    backdropPath = "/kuf6evRcwEkH8sn30Sbp9L9B446.jpg",
+                    releaseDate = "2024",
+                    firstAirDate = "2024",
                     voteAverage = 8.5,
-                    releaseDate = "2024"
+                    genreIds = emptyList(),
+                    overview = "Sample Overview"
                 ),
                 onMediaClick = onMediaClick
             )
@@ -161,7 +169,16 @@ fun LandscapeProgressCard() {
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Sample Movie Title", color = Color.White, fontWeight = FontWeight.Bold)
-        Text("45m left", color = TextMuted, fontSize = 12.sp)
+        Text(
+            text = "Wednesday",
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = "S1:E5 • 24m left",
+            color = TextMuted,
+            fontSize = 12.sp
+        )
     }
 }

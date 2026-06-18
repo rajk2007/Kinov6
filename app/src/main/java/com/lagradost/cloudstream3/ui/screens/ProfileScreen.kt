@@ -65,7 +65,7 @@ fun ProfileScreen() {
         item { SectionTitle("Language Settings") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Language, "App language")
+                SettingItem(Icons.Default.Public, "App language")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.PlayArrow, "Audio language")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
@@ -88,7 +88,7 @@ fun ProfileScreen() {
             SettingsCard {
                 SettingItem(Icons.Default.Notifications, "New episode alerts")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.NotificationsActive, "Release reminders")
+                SettingItem(Icons.Default.Notifications, "Release reminders")
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.Check, "Download completed")
             }

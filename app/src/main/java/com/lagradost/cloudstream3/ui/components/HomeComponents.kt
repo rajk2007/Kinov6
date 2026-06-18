@@ -173,7 +173,7 @@ fun HeroBanner(trendingItems: List<MediaItem>, onMediaClick: (Int) -> Unit) {
                     ) {
                         Icon(Icons.Default.PlayArrow, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Watch Now", fontWeight = FontWeight.Bold)
+                        Text("▶ Watch Now", fontWeight = FontWeight.Bold)
                     }
                 }
             }

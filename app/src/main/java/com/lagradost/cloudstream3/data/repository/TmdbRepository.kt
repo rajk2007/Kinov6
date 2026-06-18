@@ -24,10 +24,20 @@ class TmdbRepository {
     suspend fun getAnime(): List<MediaItem> = api.discoverTv(apiKey, genres = "16", language = "ja").results
     suspend fun getPopularTv(): List<MediaItem> = api.getPopularTv(apiKey = apiKey).results
     suspend fun getTopRatedMovies(): List<MediaItem> = api.getTopRatedMovies(apiKey = apiKey).results
-    suspend fun getAction(): List<MediaItem> = api.discoverMovies(apiKey, genres = "28").results
-    suspend fun getComedy(): List<MediaItem> = api.discoverMovies(apiKey, genres = "35").results
-    suspend fun getHorror(): List<MediaItem> = api.discoverMovies(apiKey, genres = "27").results
-    suspend fun getSciFi(): List<MediaItem> = api.discoverMovies(apiKey, genres = "878").results
+    suspend fun getUpcomingMovies(): List<MediaItem> = api.getUpcomingMovies(apiKey = apiKey).results
+    suspend fun getTopRatedTv(): List<MediaItem> = api.getTopRatedTv(apiKey = apiKey).results
+    suspend fun getAiringTodayTv(): List<MediaItem> = api.getAiringTodayTv(apiKey = apiKey).results
+    suspend fun getActionMovies(): List<MediaItem> = api.discoverMovies(apiKey, genres = "28").results
+    suspend fun getComedyMovies(): List<MediaItem> = api.discoverMovies(apiKey, genres = "35").results
+    suspend fun getHorrorMovies(): List<MediaItem> = api.discoverMovies(apiKey, genres = "27").results
+    suspend fun getSciFiMovies(): List<MediaItem> = api.discoverMovies(apiKey, genres = "878").results
+    suspend fun getCrimeTv(): List<MediaItem> = api.discoverTv(apiKey, genres = "80").results
+    suspend fun getDramaTv(): List<MediaItem> = api.discoverTv(apiKey, genres = "18").results
+    suspend fun getSciFiTv(): List<MediaItem> = api.discoverTv(apiKey, genres = "10765").results
+    suspend fun getTopRatedAnime(): List<MediaItem> = api.discoverTv(apiKey, genres = "16", language = "ja", sortBy = "vote_average.desc").results
+    suspend fun getActionAnime(): List<MediaItem> = api.discoverTv(apiKey, genres = "16,28", language = "ja").results
+    suspend fun getRomanceAnime(): List<MediaItem> = api.discoverTv(apiKey, genres = "16,10749", language = "ja").results
+    suspend fun getFantasyAnime(): List<MediaItem> = api.discoverTv(apiKey, genres = "16,14", language = "ja").results
     
     suspend fun getMovieDetails(movieId: Int): MediaItem = api.getMovieDetails(movieId, apiKey)
     suspend fun getSimilarMovies(movieId: Int): List<MediaItem> = api.getSimilarMovies(movieId, apiKey).results

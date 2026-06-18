@@ -164,17 +164,7 @@ fun HeroBanner(trendingItems: List<MediaItem>, onMediaClick: (Int) -> Unit) {
                     Text(text = item.displayTitle, color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold, lineHeight = 38.sp)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = "${item.displayDate} • ⭐ ${String.format("%.1f", item.voteAverage)} • Action", color = TextMuted, fontSize = 14.sp)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { onMediaClick(item.id) },
-                        colors = ButtonDefaults.buttonColors(containerColor = KINO_Red),
-                        shape = RoundedCornerShape(24.dp),
-                        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
-                    ) {
-                        Icon(Icons.Default.PlayArrow, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("▶ Watch Now", fontWeight = FontWeight.Bold)
-                    }
+
                 }
             }
         }

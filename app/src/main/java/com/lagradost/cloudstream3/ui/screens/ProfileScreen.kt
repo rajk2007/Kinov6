@@ -5,9 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,45 +20,128 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lagradost.cloudstream3.ui.theme.Background
 import com.lagradost.cloudstream3.ui.theme.KINO_Gold
 import com.lagradost.cloudstream3.ui.theme.KINO_Red
 import com.lagradost.cloudstream3.ui.theme.TextMuted
 
-@OptIn(ExperimentalMaterial3Api::class)
+val AMOLED_Black = Color(0xFF080808)
+
 @Composable
 fun ProfileScreen() {
-    var showAboutModal by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
-
     LazyColumn(
-        modifier = Modifier.fillMaxSize().background(Background)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AMOLED_Black)
     ) {
         item { ProfileHeader() }
         
-        item { SectionTitle("Settings") }
-        item { SettingItem(Icons.Default.PlayArrow, "Playback Settings", "Quality, Subtitles, etc.") }
-        item { SettingItem(Icons.Default.Settings, "Language Settings", "App language and audio") }
-        
-        item { SectionTitle("Theme") }
-        item { ThemeGrid() }
-        
-        item { SectionTitle("System") }
-        item { SettingItem(Icons.Default.Build, "Extensions Manager", "Manage plugins and sources") }
-        item { SettingItem(Icons.Default.Info, "About Kino", "Version info and developer", onClick = { showAboutModal = true }) }
-        
-        item { Spacer(modifier = Modifier.height(100.dp)) }
-    }
-
-    if (showAboutModal) {
-        ModalBottomSheet(
-            onDismissRequest = { showAboutModal = false },
-            sheetState = sheetState,
-            containerColor = Background,
-            dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray) }
-        ) {
-            AboutKinoContent()
+        item { SectionTitle("Account") }
+        item { 
+            SettingsCard {
+                SettingItem(Icons.Default.Edit, "Edit Profile")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Star, "Membership")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.AccountBox, "Profiles")
+            }
         }
+
+        item { SectionTitle("Playback Settings") }
+        item { 
+            SettingsCard {
+                SettingItem(Icons.Default.Settings, "Default video quality")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Info, "Preferred audio language")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Info, "Preferred subtitle language")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.PlayArrow, "Auto-play next episode")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Forward10, "Skip intro")
+            }
+        }
+
+        item { SectionTitle("Language Settings") }
+        item { 
+            SettingsCard {
+                SettingItem(Icons.Default.Language, "App language")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Audiotrack, "Audio language")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Subtitles, "Subtitle language")
+            }
+        }
+
+        item { SectionTitle("Appearance") }
+        item { ThemeGrid() }
+        item { 
+            SettingsCard {
+                SettingItem(Icons.Default.Palette, "Dynamic colors toggle")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.AspectRatio, "Poster size (Small/Medium/Large)")
+            }
+        }
+
+        item { SectionTitle("Notifications") }
+        item { 
+            SettingsCard {
+                SettingItem(Icons.Default.Notifications, "New episode alerts")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Alarm, "Release reminders")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Download, "Download completed")
+            }
+        }
+
+        item { SectionTitle("Extensions Manager") }
+        item { 
+            SettingsCard {
+                SettingItem(Icons.Default.Extension, "Installed extensions")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.CheckCircle, "Enable/disable sources")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Update, "Update plugins")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Add, "Add repository URL")
+            }
+        }
+
+        item { SectionTitle("Privacy & Security") }
+        item { 
+            SettingsCard {
+                SettingItem(Icons.Default.Lock, "App lock (PIN/Fingerprint)")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.History, "Clear watch history")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.ExitToApp, "Sign out", tint = KINO_Red)
+            }
+        }
+
+        item { SectionTitle("Support") }
+        item { 
+            SettingsCard {
+                SettingItem(Icons.Default.Help, "Help Center")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Report, "Report a problem")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Feedback, "Request a feature")
+            }
+        }
+
+        item { SectionTitle("About Kino") }
+        item { 
+            SettingsCard {
+                SettingItem(Icons.Default.Info, "Version info")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Person, "Developer info")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.NewReleases, "What's New")
+                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.PrivacyTip, "Privacy Policy")
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(100.dp)) }
     }
 }
 
@@ -70,10 +150,12 @@ fun ProfileHeader() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(260.dp)
+            .height(280.dp)
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(KINO_Red, Color(0xFF7B2FBE), Background)
+                    colors = listOf(KINO_Red.copy(alpha = 0.8f), AMOLED_Black),
+                    startY = 0f,
+                    endY = 800f
                 )
             ),
         contentAlignment = Alignment.Center
@@ -83,15 +165,28 @@ fun ProfileHeader() {
                 modifier = Modifier
                     .size(96.dp)
                     .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.2f))
-                    .border(2.dp, Color.White.copy(alpha = 0.5f), CircleShape),
+                    .background(Color.White.copy(alpha = 0.1f))
+                    .border(1.dp, Color.White.copy(alpha = 0.2f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text("RK", color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
             }
-            Spacer(modifier = Modifier.height(12.dp))
-            Text("Raj Karmakar", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text("⭐ Premium Member", color = KINO_Gold, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Raj Karmakar", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            Surface(
+                color = KINO_Gold.copy(alpha = 0.1f),
+                shape = RoundedCornerShape(16.dp),
+                border = BorderStroke(0.5.dp, KINO_Gold.copy(alpha = 0.5f))
+            ) {
+                Text(
+                    text = "⭐ Premium Member", 
+                    color = KINO_Gold, 
+                    fontSize = 12.sp, 
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
+                )
+            }
         }
     }
 }
@@ -99,85 +194,89 @@ fun ProfileHeader() {
 @Composable
 fun SectionTitle(title: String) {
     Text(
-        text = title,
-        color = KINO_Red,
-        fontSize = 14.sp,
+        text = title.uppercase(),
+        color = TextMuted,
+        fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp)
+        letterSpacing = 1.sp,
+        modifier = Modifier.padding(start = 24.dp, top = 24.dp, bottom = 8.dp)
     )
 }
 
 @Composable
-fun SettingItem(icon: ImageVector, title: String, subtitle: String, onClick: () -> Unit = {}) {
+fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.03f)),
+        border = BorderStroke(0.5.dp, Color.White.copy(alpha = 0.05f))
+    ) {
+        Column(content = content)
+    }
+}
+
+@Composable
+fun SettingItem(icon: ImageVector, title: String, tint: Color = Color.White) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable { }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
+        Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(20.dp))
         Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(title, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-            Text(subtitle, color = TextMuted, fontSize = 12.sp)
-        }
+        Text(title, color = tint, fontSize = 15.sp, fontWeight = FontWeight.Medium)
         Spacer(modifier = Modifier.weight(1f))
-        Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = TextMuted)
+        Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = TextMuted, modifier = Modifier.size(16.dp))
     }
 }
 
 @Composable
 fun ThemeGrid() {
     val themes = listOf(
-        "AMOLED Black" to Background,
+        "AMOLED Black" to AMOLED_Black,
         "Cinematic Red" to KINO_Red,
         "Purple Glow" to Color(0xFF7B2FBE),
         "Midnight Blue" to Color(0xFF1A237E)
     )
     
-    Row(
-        modifier = Modifier.padding(16.dp).fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        themes.forEach { (name, color) ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(color)
-                        .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(12.dp))
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(name, color = TextMuted, fontSize = 10.sp, maxLines = 1)
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            themes.take(2).forEach { (name, color) ->
+                ThemeTile(name, color, Modifier.weight(1f))
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            themes.drop(2).forEach { (name, color) ->
+                ThemeTile(name, color, Modifier.weight(1f))
             }
         }
     }
 }
 
 @Composable
-fun AboutKinoContent() {
+fun ThemeTile(name: String, color: Color, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(32.dp),
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color.White.copy(alpha = 0.03f))
+            .border(0.5.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(12.dp))
+            .clickable { }
+            .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "KINO",
-            color = KINO_Red,
-            fontSize = 48.sp,
-            fontWeight = FontWeight.Bold
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(color)
+                .border(1.dp, Color.White.copy(alpha = 0.1f), CircleShape)
         )
-        Text("by Raj Karmakar", color = TextMuted, fontSize = 14.sp)
-        Spacer(modifier = Modifier.height(24.dp))
-        Text("Version 1.0.0", color = Color.White, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Cinema. Redefined.", color = Color.White, fontWeight = FontWeight.Light, fontSize = 18.sp)
-        Spacer(modifier = Modifier.height(48.dp))
+        Text(name, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Medium)
     }
 }

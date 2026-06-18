@@ -51,17 +51,12 @@ fun MainScreen() {
                             label = { Text(screen.label) },
                             selected = currentRoute == screen.route,
                             onClick = {
-                                if (currentRoute != screen.route) {
-                                    navController.navigate(screen.route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
                                     }
-                                } else if (screen.route == Screen.Home.route) {
-                                    // If already on Home, but maybe have other screens on top, pop them
-                                    navController.popBackStack(Screen.Home.route, inclusive = false)
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
                             },
                             colors = NavigationBarItemDefaults.colors(

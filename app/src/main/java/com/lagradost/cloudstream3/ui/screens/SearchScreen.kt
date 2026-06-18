@@ -51,7 +51,7 @@ fun SearchScreen(onMediaClick: (Int) -> Unit) {
     }
 
     LaunchedEffect(searchQuery) {
-        if (searchQuery.length >= 4) {
+        if (searchQuery.length >= 2) {
             delay(400)
             isSearching = true
             try {
@@ -97,7 +97,7 @@ fun SearchScreen(onMediaClick: (Int) -> Unit) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = KINO_Red)
             }
-        } else if (searchQuery.length < 4) {
+        } else if (searchQuery.length < 2) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 item {
                     Text(

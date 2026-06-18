@@ -33,36 +33,61 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
+                // Common
                 val trending = async { repository.getTrending() }
-                val popularKino = async { repository.getPopularMovies() }
-                val newReleases = async { repository.getNowPlaying() }
-                val hollywood = async { repository.getHollywood() }
-                val bollywood = async { repository.getBollywood() }
-                val korean = async { repository.getKoreanDrama() }
-                val japanese = async { repository.getJapanese() }
-                val anime = async { repository.getAnime() }
-                val tvSeries = async { repository.getPopularTv() }
-                val topRated = async { repository.getTopRatedMovies() }
-                val action = async { repository.getAction() }
-                val comedy = async { repository.getComedy() }
-                val horror = async { repository.getHorror() }
-                val sciFi = async { repository.getSciFi() }
+                
+                // Movies
+                val nowPlaying = async { repository.getNowPlaying() }
+                val popularMovies = async { repository.getPopularMovies() }
+                val topRatedMovies = async { repository.getTopRatedMovies() }
+                val upcomingMovies = async { repository.getUpcomingMovies() }
+                val actionMovies = async { repository.getActionMovies() }
+                val comedyMovies = async { repository.getComedyMovies() }
+                val horrorMovies = async { repository.getHorrorMovies() }
+                val sciFiMovies = async { repository.getSciFiMovies() }
+
+                // Series
+                val popularTv = async { repository.getPopularTv() }
+                val topRatedTv = async { repository.getTopRatedTv() }
+                val airingToday = async { repository.getAiringTodayTv() }
+                val crimeTv = async { repository.getCrimeTv() }
+                val dramaTv = async { repository.getDramaTv() }
+                val sciFiTv = async { repository.getSciFiTv() }
+
+                // Anime
+                val popularAnime = async { repository.getAnime() }
+                val topRatedAnime = async { repository.getTopRatedAnime() }
+                val actionAnime = async { repository.getActionAnime() }
+                val romanceAnime = async { repository.getRomanceAnime() }
+                val fantasyAnime = async { repository.getFantasyAnime() }
 
                 _rows.value = mapOf(
                     "Trending Now" to trending.await(),
-                    "Popular on KINO" to popularKino.await(),
-                    "New Releases" to newReleases.await(),
-                    "Hollywood Movies" to hollywood.await(),
-                    "Bollywood Movies" to bollywood.await(),
-                    "Korean Drama & Movies" to korean.await(),
-                    "Japanese Movies" to japanese.await(),
-                    "Anime" to anime.await(),
-                    "TV Series" to tvSeries.await(),
-                    "Top Rated" to topRated.await(),
-                    "Action & Adventure" to action.await(),
-                    "Comedy" to comedy.await(),
-                    "Horror & Thriller" to horror.await(),
-                    "Sci-Fi & Fantasy" to sciFi.await()
+                    
+                    // Movies
+                    "Now Playing" to nowPlaying.await(),
+                    "Popular Movies" to popularMovies.await(),
+                    "Top Rated Movies" to topRatedMovies.await(),
+                    "Upcoming Movies" to upcomingMovies.await(),
+                    "Action Movies" to actionMovies.await(),
+                    "Comedy Movies" to comedyMovies.await(),
+                    "Horror Movies" to horrorMovies.await(),
+                    "Sci-Fi Movies" to sciFiMovies.await(),
+
+                    // Series
+                    "Popular TV" to popularTv.await(),
+                    "Top Rated TV" to topRatedTv.await(),
+                    "Airing Today" to airingToday.await(),
+                    "Crime TV" to crimeTv.await(),
+                    "Drama TV" to dramaTv.await(),
+                    "Sci-Fi TV" to sciFiTv.await(),
+
+                    // Anime
+                    "Popular Anime" to popularAnime.await(),
+                    "Top Rated Anime" to topRatedAnime.await(),
+                    "Action Anime" to actionAnime.await(),
+                    "Romance Anime" to romanceAnime.await(),
+                    "Fantasy Anime" to fantasyAnime.await()
                 )
             } catch (e: Exception) {
                 e.printStackTrace()

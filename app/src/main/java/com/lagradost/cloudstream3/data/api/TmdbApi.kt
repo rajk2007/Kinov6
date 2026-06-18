@@ -50,6 +50,21 @@ interface TmdbApi {
         @Query("api_key") apiKey: String
     ): TmdbResponse
 
+    @GET("movie/upcoming")
+    suspend fun getUpcomingMovies(
+        @Query("api_key") apiKey: String
+    ): TmdbResponse
+
+    @GET("tv/top_rated")
+    suspend fun getTopRatedTv(
+        @Query("api_key") apiKey: String
+    ): TmdbResponse
+
+    @GET("tv/airing_today")
+    suspend fun getAiringTodayTv(
+        @Query("api_key") apiKey: String
+    ): TmdbResponse
+
     @GET("movie/{movie_id}")
     suspend fun getMovieDetails(
         @Path("movie_id") movieId: Int,

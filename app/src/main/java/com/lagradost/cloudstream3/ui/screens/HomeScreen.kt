@@ -27,7 +27,12 @@ fun HomeScreen(
 
     val filteredRows = remember(selectedCategory, rows) {
         when (selectedCategory) {
-            "Trending" -> listOf("Trending Now")
+            "Trending" -> listOf(
+                "Trending Now", "Popular on KINO", "New Releases",
+                "Hollywood Movies", "Bollywood Movies", "Korean Drama & Movies",
+                "Japanese Movies", "Anime", "TV Series", "Top Rated",
+                "Action & Adventure", "Comedy", "Horror & Thriller", "Sci-Fi & Fantasy"
+            )
             "Movies" -> listOf(
                 "Now Playing", "Popular Movies", "Top Rated Movies", 
                 "Upcoming Movies", "Action Movies", "Comedy Movies", 

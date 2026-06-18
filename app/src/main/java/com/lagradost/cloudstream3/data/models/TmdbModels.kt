@@ -16,7 +16,8 @@ data class MediaItem(
     @SerializedName("first_air_date") val firstAirDate: String?,
     @SerializedName("vote_average") val voteAverage: Double,
     @SerializedName("genre_ids") val genreIds: List<Int>,
-    val overview: String?
+    val overview: String?,
+    val popularity: Double?
 ) {
     val displayTitle: String get() = title ?: name ?: "Unknown"
     val displayDate: String get() = (releaseDate ?: firstAirDate ?: "").take(4)

@@ -55,7 +55,7 @@ fun SearchScreen(onMediaClick: (Int) -> Unit) {
             delay(400)
             isSearching = true
             try {
-                searchResults = repository.search(searchQuery)
+                searchResults = repository.search(searchQuery).sortedByDescending { it.popularity ?: 0.0 }
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {

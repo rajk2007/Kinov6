@@ -12,9 +12,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import android.widget.Toast
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -29,6 +31,7 @@ val AMOLED_Black = Color(0xFF080808)
 
 @Composable
 fun ProfileScreen() {
+    val context = LocalContext.current
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -220,10 +223,13 @@ fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
 
 @Composable
 fun SettingItem(icon: ImageVector, title: String, tint: Color = Color.White) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable { 
+                Toast.makeText(context, "$title coming soon!", Toast.LENGTH_SHORT).show()
+            }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -261,12 +267,15 @@ fun ThemeGrid() {
 
 @Composable
 fun ThemeTile(name: String, color: Color, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White.copy(alpha = 0.03f))
             .border(0.5.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(12.dp))
-            .clickable { }
+            .clickable { 
+                Toast.makeText(context, "$name theme selected!", Toast.LENGTH_SHORT).show()
+            }
             .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

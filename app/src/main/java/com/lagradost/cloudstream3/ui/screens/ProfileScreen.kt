@@ -1,5 +1,6 @@
 package com.lagradost.cloudstream3.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,9 +40,9 @@ fun ProfileScreen() {
         item { 
             SettingsCard {
                 SettingItem(Icons.Default.Edit, "Edit Profile")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.Star, "Membership")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.AccountBox, "Profiles")
             }
         }
@@ -50,14 +51,14 @@ fun ProfileScreen() {
         item { 
             SettingsCard {
                 SettingItem(Icons.Default.Settings, "Default video quality")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.Info, "Preferred audio language")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.Info, "Preferred subtitle language")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.PlayArrow, "Auto-play next episode")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Forward10, "Skip intro")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Refresh, "Skip intro")
             }
         }
 
@@ -65,10 +66,10 @@ fun ProfileScreen() {
         item { 
             SettingsCard {
                 SettingItem(Icons.Default.Language, "App language")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Audiotrack, "Audio language")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Subtitles, "Subtitle language")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.PlayArrow, "Audio language")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.List, "Subtitle language")
             }
         }
 
@@ -76,9 +77,9 @@ fun ProfileScreen() {
         item { ThemeGrid() }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Palette, "Dynamic colors toggle")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.AspectRatio, "Poster size (Small/Medium/Large)")
+                SettingItem(Icons.Default.Build, "Dynamic colors toggle")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Info, "Poster size (Small/Medium/Large)")
             }
         }
 
@@ -86,22 +87,22 @@ fun ProfileScreen() {
         item { 
             SettingsCard {
                 SettingItem(Icons.Default.Notifications, "New episode alerts")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Alarm, "Release reminders")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Download, "Download completed")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.NotificationsActive, "Release reminders")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Check, "Download completed")
             }
         }
 
         item { SectionTitle("Extensions Manager") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Extension, "Installed extensions")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Build, "Installed extensions")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.CheckCircle, "Enable/disable sources")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Update, "Update plugins")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Refresh, "Update plugins")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.Add, "Add repository URL")
             }
         }
@@ -110,9 +111,9 @@ fun ProfileScreen() {
         item { 
             SettingsCard {
                 SettingItem(Icons.Default.Lock, "App lock (PIN/Fingerprint)")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.History, "Clear watch history")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Delete, "Clear watch history")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.ExitToApp, "Sign out", tint = KINO_Red)
             }
         }
@@ -120,11 +121,11 @@ fun ProfileScreen() {
         item { SectionTitle("Support") }
         item { 
             SettingsCard {
-                SettingItem(Icons.Default.Help, "Help Center")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Report, "Report a problem")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.Feedback, "Request a feature")
+                SettingItem(Icons.Default.Info, "Help Center")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Warning, "Report a problem")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Email, "Request a feature")
             }
         }
 
@@ -132,12 +133,12 @@ fun ProfileScreen() {
         item { 
             SettingsCard {
                 SettingItem(Icons.Default.Info, "Version info")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
                 SettingItem(Icons.Default.Person, "Developer info")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.NewReleases, "What's New")
-                Divider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
-                SettingItem(Icons.Default.PrivacyTip, "Privacy Policy")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Info, "What's New")
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), thickness = 0.5.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                SettingItem(Icons.Default.Lock, "Privacy Policy")
             }
         }
 

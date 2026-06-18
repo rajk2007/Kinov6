@@ -120,9 +120,9 @@ fun HeroBanner(trendingItems: List<MediaItem>, onMediaClick: (Int) -> Unit) {
     val infiniteTransition = rememberInfiniteTransition(label = "KenBurns")
     val kenBurnsScale by infiniteTransition.animateFloat(
         initialValue = 1.0f,
-        targetValue = 1.15f,
+        targetValue = 1.25f,
         animationSpec = infiniteRepeatable(
-            animation = tween(10000, easing = LinearEasing),
+            animation = tween(15000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "Scale"
@@ -223,14 +223,14 @@ fun ContentRow(title: String, items: List<MediaItem>, onMediaClick: (Int) -> Uni
                     val center = (itemInfo.offset + itemInfo.size / 2).toFloat()
                     val distanceFromCenter = abs(screenWidthPx / 2 - center)
                     val normalizedDistance = (distanceFromCenter / (screenWidthPx / 2)).coerceIn(0f, 1f)
-                    1f - (normalizedDistance * 0.1f)
+                    1f - (normalizedDistance * 0.15f)
                 } else 1f
 
                 val alpha = if (itemInfo != null) {
                     val center = (itemInfo.offset + itemInfo.size / 2).toFloat()
                     val distanceFromCenter = abs(screenWidthPx / 2 - center)
                     val normalizedDistance = (distanceFromCenter / (screenWidthPx / 2)).coerceIn(0f, 1f)
-                    1f - (normalizedDistance * 0.5f)
+                    1f - (normalizedDistance * 0.6f)
                 } else 1f
 
                 MediaCard(

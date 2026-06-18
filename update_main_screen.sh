@@ -1,3 +1,6 @@
+#!/bin/bash
+
+cat <<EOF > app/src/main/java/com/lagradost/cloudstream3/ui/screens/MainScreen.kt
 package com.lagradost.cloudstream3.ui.screens
 
 import androidx.compose.foundation.background
@@ -79,13 +82,13 @@ fun MainScreen() {
         ) {
             composable(Screen.Home.route) { 
                 HomeScreen(
-                    onMediaClick = { mediaId -> navController.navigate("details/$mediaId") },
+                    onMediaClick = { mediaId -> navController.navigate("details/\$mediaId") },
                     onSearchClick = { navController.navigate(Screen.Search.route) }
                 ) 
             }
             composable(Screen.Search.route) { 
                 SearchScreen(
-                    onMediaClick = { mediaId -> navController.navigate("details/$mediaId") }
+                    onMediaClick = { mediaId -> navController.navigate("details/\$mediaId") }
                 ) 
             }
             composable(Screen.Library.route) { PlaceholderScreen("Library") }
@@ -98,7 +101,7 @@ fun MainScreen() {
                 DetailsScreen(
                     mediaId = mediaId,
                     onBackClick = { navController.popBackStack() },
-                    onMediaClick = { id -> navController.navigate("details/$id") }
+                    onMediaClick = { id -> navController.navigate("details/\$id") }
                 )
             }
         }
@@ -108,6 +111,7 @@ fun MainScreen() {
 @Composable
 fun PlaceholderScreen(name: String) {
     Box(modifier = Modifier.fillMaxSize().background(Background), contentAlignment = Alignment.Center) {
-        Text(text = "$name Screen", color = TextPrimary, style = MaterialTheme.typography.headlineLarge)
+        Text(text = "\$name Screen", color = TextPrimary, style = MaterialTheme.typography.headlineLarge)
     }
 }
+EOF

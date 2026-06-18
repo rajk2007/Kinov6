@@ -1,13 +1,13 @@
 @file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 package com.lagradost.cloudstream3.ui.components
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +35,7 @@ import coil.compose.AsyncImage
 import com.lagradost.cloudstream3.data.models.MediaItem
 import com.lagradost.cloudstream3.ui.theme.*
 import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 @Composable
 fun HomeHeader(onSearchClick: () -> Unit) {
@@ -75,7 +77,7 @@ fun CategoryPills(selectedCategory: String, onCategorySelected: (String) -> Unit
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(vertical = 12.dp)
     ) {
-        items(categories) { category ->
+        itemsIndexed(categories) { _, category ->
             val isSelected = category == selectedCategory
             Surface(
                 modifier = Modifier
@@ -110,6 +112,17 @@ fun HeroBanner(trendingItems: List<MediaItem>, onMediaClick: (Int) -> Unit) {
         }
     }
 
+    val infiniteTransition = rememberInfiniteTransition(label = "KenBurns")
+    val kenBurnsScale by infiniteTransition.animateFloat(
+        initialValue = 1.0f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "Scale"
+    )
+
     Box(modifier = Modifier.fillMaxWidth().height(450.dp)) {
         HorizontalPager(
             state = pagerState,
@@ -121,7 +134,12 @@ fun HeroBanner(trendingItems: List<MediaItem>, onMediaClick: (Int) -> Unit) {
                     model = item.fullBackdropPath,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer(
+                            scaleX = kenBurnsScale,
+                            scaleY = kenBurnsScale
+                        )
                 )
                 Box(
                     modifier = Modifier
@@ -176,7 +194,9 @@ fun HeroBanner(trendingItems: List<MediaItem>, onMediaClick: (Int) -> Unit) {
 @Composable
 fun ContentRow(title: String, items: List<MediaItem>, onMediaClick: (Int) -> Unit) {
     val listState = rememberLazyListState()
-    
+    val configuration = LocalConfiguration.current
+    val screenWidthPx = configuration.screenWidthDp * configuration.densityDpi / 160f
+
     Column(modifier = Modifier.padding(vertical = 12.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
@@ -192,23 +212,50 @@ fun ContentRow(title: String, items: List<MediaItem>, onMediaClick: (Int) -> Uni
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(items) { item ->
-                MediaCard(item, onMediaClick)
+            itemsIndexed(items) { index, item ->
+                val itemInfo = listState.layoutInfo.visibleItemsInfo.find { it.index == index }
+                val scale = if (itemInfo != null) {
+                    val center = (itemInfo.offset + itemInfo.size / 2).toFloat()
+                    val distanceFromCenter = abs(screenWidthPx / 2 - center)
+                    val normalizedDistance = (distanceFromCenter / (screenWidthPx / 2)).coerceIn(0f, 1f)
+                    1f - (normalizedDistance * 0.1f)
+                } else 1f
+
+                val alpha = if (itemInfo != null) {
+                    val center = (itemInfo.offset + itemInfo.size / 2).toFloat()
+                    val distanceFromCenter = abs(screenWidthPx / 2 - center)
+                    val normalizedDistance = (distanceFromCenter / (screenWidthPx / 2)).coerceIn(0f, 1f)
+                    1f - (normalizedDistance * 0.5f)
+                } else 1f
+
+                MediaCard(
+                    item = item, 
+                    onMediaClick = onMediaClick,
+                    modifier = Modifier.graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        alpha = alpha
+                    )
+                )
             }
         }
     }
 }
 
 @Composable
-fun MediaCard(item: MediaItem, onMediaClick: (Int) -> Unit) {
+fun MediaCard(
+    item: MediaItem, 
+    onMediaClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(if (isPressed) 0.95f else 1f)
+    val pressScale by animateFloatAsState(if (isPressed) 0.95f else 1f, label = "PressScale")
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .width(130.dp)
-            .scale(scale)
+            .scale(pressScale)
             .clickable(interactionSource = interactionSource, indication = null) { onMediaClick(item.id) }
     ) {
         Box(

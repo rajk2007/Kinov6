@@ -30,7 +30,7 @@ import com.lagradost.cloudstream3.ui.theme.TextMuted
 import com.lagradost.cloudstream3.ui.theme.TextPrimary
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(onMediaClick: (Int) -> Unit) {
     val repository = remember { TmdbRepository() }

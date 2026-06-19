@@ -88,10 +88,15 @@ object PluginEngine {
         for (plugin in loadedPlugins) {
             try {
                 Log.d(TAG, "Calling loadLinks on plugin: ${plugin.name}")
-                plugin.loadLinks(url, callback = { link ->
-                    Log.d(TAG, "Found link: ${link.name} - ${link.url}")
-                    links.add(link)
-                })
+                plugin.loadLinks(
+                    data = url,
+                    isCasting = false,
+                    subtitleCallback = { _ -> },
+                    callback = { link ->
+                        Log.d(TAG, "Found link: ${link.name} - ${link.url}")
+                        links.add(link)
+                    }
+                )
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading links in plugin: ${plugin.name}", e)
             }

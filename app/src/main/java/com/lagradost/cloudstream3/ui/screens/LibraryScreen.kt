@@ -26,6 +26,7 @@ import com.lagradost.cloudstream3.ui.theme.KINO_Red
 import com.lagradost.cloudstream3.ui.theme.TextMuted
 import com.lagradost.cloudstream3.ui.theme.TextPrimary
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(onMediaClick: (Int) -> Unit) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }

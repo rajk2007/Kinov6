@@ -40,11 +40,12 @@ fun SearchScreen(onMediaClick: (Int) -> Unit) {
     var isSearching by remember { mutableStateOf(false) }
     var isFocused by remember { mutableStateOf(false) }
 
-    val trendingSearches = listOf("Jawan", "Oppenheimer", "One Piece", "Demon Slayer")
+    var trendingItems by remember { mutableStateOf<List<MediaItem>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         try {
             popularMovies = repository.getPopularMovies()
+            trendingItems = repository.getTrending()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -99,49 +100,35 @@ fun SearchScreen(onMediaClick: (Int) -> Unit) {
             }
         } else if (searchQuery.length < 2) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                item {
-                    Text(
-                        text = "Trending Searches",
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                    FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        trendingSearches.forEach { search ->
-                            Surface(
-                                color = Color.White.copy(alpha = 0.1f),
-                                shape = RoundedCornerShape(20.dp),
-                                modifier = Modifier.clickable { searchQuery = search }
-                            ) {
-                                Text(
-                                    text = search,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                    fontSize = 14.sp
-                                )
-                            }
-                        }
+                if (trendingItems.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "Trending Searches",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                    items(trendingItems.take(5)) { item ->
+                        SearchResultItem(item = item, onClick = { onMediaClick(item.id) })
                     }
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Popular Movies",
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-
-                items(popularMovies) { item ->
-                    SearchResultItem(item = item, onClick = { onMediaClick(item.id) })
+                if (popularMovies.isNotEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Popular Searches",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+                    items(popularMovies.take(10)) { item ->
+                        SearchResultItem(item = item, onClick = { onMediaClick(item.id) })
+                    }
                 }
             }
         } else {

@@ -160,7 +160,7 @@ fun HeroBanner(trendingItems: List<MediaItem>, onMediaClick: (Int) -> Unit) {
                 ) {
                     Text(text = item.displayTitle, color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold, lineHeight = 38.sp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "${item.displayDate} • ⭐ ${String.format("%.1f", item.voteAverage)} • Action", color = TextMuted, fontSize = 14.sp)
+                    Text(text = "${item.displayDate} • ⭐ ${String.format("%.1f", item.voteAverage)}", color = TextMuted, fontSize = 14.sp)
 
                 }
             }

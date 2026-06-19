@@ -21,6 +21,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -68,6 +71,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer-hls:1.3.1")
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("org.jsoup:jsoup:1.17.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("com.github.Blatzar:NiceHttp:0.4.17")
 

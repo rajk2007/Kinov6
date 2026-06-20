@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -39,9 +40,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -74,7 +72,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
     implementation("com.github.Blatzar:NiceHttp:0.4.17")
-    implementation("com.github.recloudstream.cloudstream:library-android:v4.4.0")
+    implementation("com.github.recloudstream.cloudstream:library-android:v4.6.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
